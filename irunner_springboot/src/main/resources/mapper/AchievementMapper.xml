@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjgsu.irunner.mapper.AchievementMapper">
+
+    <resultMap id="AchievementResultMap" type="Achievement">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="icon_url" property="iconUrl"/>
+        <result column="condition_type" property="conditionType"/>
+        <result column="condition_value" property="conditionValue"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO achievements (
+        code, name, description, icon_url, condition_type, condition_value, created_at
+        ) VALUES (
+        #{code}, #{name}, #{description}, #{iconUrl},
+        #{conditionType}, #{conditionValue}, #{createdAt}
+        )
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO achievements (
+        code, name, description, icon_url, condition_type, condition_value, created_at
+        ) VALUES
+        <foreach collection="list" item="achievement" separator=",">
+            (#{achievement.code}, #{achievement.name}, #{achievement.description},
+            #{achievement.iconUrl}, #{achievement.conditionType},
+            #{achievement.conditionValue}, #{achievement.createdAt})
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="AchievementResultMap">
+        SELECT * FROM achievements WHERE id = #{id}
+    </select>
+
+    <select id="selectByCode" resultMap="AchievementResultMap">
+        SELECT * FROM achievements WHERE code = #{code}
+    </select>
+
+    <select id="selectAll" resultMap="AchievementResultMap">
+        SELECT * FROM achievements ORDER BY created_at ASC
+    </select>
+
+    <update id="update">
+        UPDATE achievements
+        SET code = #{code},
+        name = #{name},
+        description = #{description},
+        icon_url = #{iconUrl},
+        condition_type = #{conditionType},
+        condition_value = #{conditionValue}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM achievements WHERE id = #{id}
+    </delete>
+
+    <select id="count" resultType="Long">
+        SELECT COUNT(*) FROM achievements
+    </select>
+
+</mapper>

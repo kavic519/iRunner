@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjgsu.irunner.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="total_runs" property="totalRuns"/>
+        <result column="total_distance" property="totalDistance"/>
+        <result column="total_duration" property="totalDuration"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (
+        username, password, email, nick_name, avatar_url,
+        total_runs, total_distance, total_duration, created_at, updated_at
+        ) VALUES (
+        #{username}, #{password}, #{email}, #{nickName}, #{avatarUrl},
+        #{totalRuns}, #{totalDistance}, #{totalDuration}, #{createdAt}, #{updatedAt}
+        )
+    </insert>
+
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <select id="selectByUsername" resultMap="UserResultMap">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+
+    <select id="selectByEmail" resultMap="UserResultMap">
+        SELECT * FROM users WHERE email = #{email}
+    </select>
+
+    <select id="existsByUsername" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM users WHERE username = #{username}
+    </select>
+
+    <select id="existsByEmail" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM users WHERE email = #{email}
+    </select>
+
+    <update id="update">
+        UPDATE users
+        SET username = #{username},
+        password = #{password},
+        email = #{email},
+        nick_name = #{nickName},
+        avatar_url = #{avatarUrl},
+        total_runs = #{totalRuns},
+        total_distance = #{totalDistance},
+        total_duration = #{totalDuration},
+        updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectTopByDistance" resultMap="UserResultMap">
+        SELECT * FROM users
+        WHERE total_distance >= #{minDistance}
+        ORDER BY total_distance DESC
+    </select>
+
+    <select id="selectTopByRuns" resultMap="UserResultMap">
+        SELECT * FROM users
+        WHERE total_runs >= #{minRuns}
+        ORDER BY total_runs DESC
+    </select>
+
+    <select id="selectAll" resultMap="UserResultMap">
+        SELECT * FROM users
+    </select>
+
+    <update id="updateUserStats">
+        UPDATE users
+        SET total_runs = total_runs + 1,
+        total_distance = total_distance + #{distance},
+        total_duration = total_duration + #{duration},
+        updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+</mapper>

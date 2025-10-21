@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjgsu.irunner.mapper.RunSessionMapper">
+
+    <resultMap id="RunSessionResultMap" type="RunSession">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="distance_meters" property="distanceMeters"/>
+        <result column="duration_seconds" property="durationSeconds"/>
+        <result column="avg_pace" property="avgPace"/>
+        <result column="calories_burned" property="caloriesBurned"/>
+        <result column="weather_condition" property="weatherCondition"/>
+        <result column="created_at" property="createdAt"/>
+
+        <!-- 关联用户信息 -->
+        <association property="user" javaType="User">
+            <id column="user_id" property="id"/>
+            <result column="u_username" property="username"/>
+            <result column="u_email" property="email"/>
+            <result column="u_nick_name" property="nickName"/>
+        </association>
+
+        <!-- 关联路由坐标 -->
+        <collection property="route" ofType="Coordinate"
+                    select="selectCoordinatesByRunSessionId"
+                    column="id"/>
+    </resultMap>
+
+    <resultMap id="CoordinateResultMap" type="Coordinate">
+        <id column="id" property="id"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="sequence_order" property="order"/>
+        <result column="run_session_id" property="runSessionId"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO run_sessions (
+        user_id, start_time, end_time, distance_meters, duration_seconds,
+        avg_pace, calories_burned, weather_condition, created_at
+        ) VALUES (
+        #{user.id}, #{startTime}, #{endTime}, #{distanceMeters}, #{durationSeconds},
+        #{avgPace}, #{caloriesBurned}, #{weatherCondition}, #{createdAt}
+        )
+    </insert>
+
+    <select id="selectById" resultMap="RunSessionResultMap">
+        SELECT rs.*,
+        u.username as u_username,
+        u.email as u_email,
+        u.nick_name as u_nick_name
+        FROM run_sessions rs
+        LEFT JOIN users u ON rs.user_id = u.id
+        WHERE rs.id = #{id}
+    </select>
+
+    <select id="selectByIdWithRoute" resultMap="RunSessionResultMap">
+        SELECT rs.*,
+        u.username as u_username,
+        u.email as u_email,
+        u.nick_name as u_nick_name
+        FROM run_sessions rs
+        LEFT JOIN users u ON rs.user_id = u.id
+        WHERE rs.id = #{id}
+    </select>
+
+    <select id="selectByUserId" resultMap="RunSessionResultMap">
+        SELECT rs.*,
+        u.username as u_username,
+        u.email as u_email,
+        u.nick_name as u_nick_name
+        FROM run_sessions rs
+        LEFT JOIN users u ON rs.user_id = u.id
+        WHERE rs.user_id = #{userId}
+        ORDER BY rs.start_time DESC
+    </select>
+
+    <select id="selectByUserIdWithRoute" resultMap="RunSessionResultMap">
+        SELECT rs.*,
+        u.username as u_username,
+        u.email as u_email,
+        u.nick_name as u_nick_name
+        FROM run_sessions rs
+        LEFT JOIN users u ON rs.user_id = u.id
+        WHERE rs.user_id = #{userId}
+        ORDER BY rs.start_time DESC
+    </select>
+
+    <select id="selectRecentByUserId" resultMap="RunSessionResultMap">
+        SELECT rs.*,
+        u.username as u_username,
+        u.email as u_email,
+        u.nick_name as u_nick_name
+        FROM run_sessions rs
+        LEFT JOIN users u ON rs.user_id = u.id
+        WHERE rs.user_id = #{userId}
+        ORDER BY rs.start_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectCoordinatesByRunSessionId" resultMap="CoordinateResultMap">
+        SELECT * FROM coordinates
+        WHERE run_session_id = #{id}
+        ORDER BY sequence_order ASC
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM run_sessions WHERE id = #{id}
+    </delete>
+
+    <select id="selectTotalDistanceByUserId" resultType="Double">
+        SELECT COALESCE(SUM(distance_meters), 0)
+        FROM run_sessions
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectTotalDurationByUserId" resultType="Integer">
+        SELECT COALESCE(SUM(duration_seconds), 0)
+        FROM run_sessions
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectTotalRunsByUserId" resultType="Integer">
+        SELECT COUNT(*) FROM run_sessions WHERE user_id = #{userId}
+    </select>
+
+</mapper>

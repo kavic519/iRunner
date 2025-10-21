@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjgsu.irunner.mapper.CoordinateMapper">
+
+    <resultMap id="CoordinateResultMap" type="Coordinate">
+        <id column="id" property="id"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="sequence_order" property="order"/>
+        <result column="run_session_id" property="runSessionId"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO coordinates (
+        latitude, longitude, sequence_order, run_session_id
+        ) VALUES (
+        #{latitude}, #{longitude}, #{order}, #{runSessionId}
+        )
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO coordinates (
+        latitude, longitude, sequence_order, run_session_id
+        ) VALUES
+        <foreach collection="list" item="coord" separator=",">
+            (#{coord.latitude}, #{coord.longitude}, #{coord.order}, #{coord.runSessionId})
+        </foreach>
+    </insert>
+
+    <select id="selectByRunSessionId" resultMap="CoordinateResultMap">
+        SELECT * FROM coordinates
+        WHERE run_session_id = #{runSessionId}
+        ORDER BY sequence_order ASC
+    </select>
+
+    <delete id="deleteByRunSessionId">
+        DELETE FROM coordinates WHERE run_session_id = #{runSessionId}
+    </delete>
+
+    <delete id="deleteById">
+        DELETE FROM coordinates WHERE id = #{id}
+    </delete>
+
+    <update id="update">
+        UPDATE coordinates
+        SET latitude = #{latitude},
+        longitude = #{longitude},
+        sequence_order = #{order},
+        run_session_id = #{runSessionId}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

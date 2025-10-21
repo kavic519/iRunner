@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zjgsu.irunner.mapper.UserAchievementMapper">
+
+    <resultMap id="UserAchievementResultMap" type="UserAchievement">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="achievement_id" property="achievementId"/>
+        <result column="unlocked_at" property="unlockedAt"/>
+        <result column="progress" property="progress"/>
+        <result column="is_unlocked" property="isUnlocked"/>
+
+        <!-- 关联成就信息 -->
+        <association property="achievement" javaType="Achievement">
+            <id column="a_id" property="id"/>
+            <result column="a_code" property="code"/>
+            <result column="a_name" property="name"/>
+            <result column="a_description" property="description"/>
+            <result column="a_icon_url" property="iconUrl"/>
+            <result column="a_condition_type" property="conditionType"/>
+            <result column="a_condition_value" property="conditionValue"/>
+            <result column="a_created_at" property="createdAt"/>
+        </association>
+
+        <!-- 关联用户信息 -->
+        <association property="user" javaType="User">
+            <id column="u_id" property="id"/>
+            <result column="u_username" property="username"/>
+            <result column="u_nick_name" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_achievements (
+        user_id, achievement_id, unlocked_at, progress, is_unlocked
+        ) VALUES (
+        #{userId}, #{achievementId}, #{unlockedAt}, #{progress}, #{isUnlocked}
+        )
+    </insert>
+
+    <insert id="insertBatch">
+        INSERT INTO user_achievements (
+        user_id, achievement_id, unlocked_at, progress, is_unlocked
+        ) VALUES
+        <foreach collection="list" item="ua" separator=",">
+            (#{ua.userId}, #{ua.achievementId}, #{ua.unlockedAt}, #{ua.progress}, #{ua.isUnlocked})
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="UserAchievementResultMap">
+        SELECT
+        ua.*,
+        a.id as a_id, a.code as a_code, a.name as a_name, a.description as a_description,
+        a.icon_url as a_icon_url, a.condition_type as a_condition_type,
+        a.condition_value as a_condition_value, a.created_at as a_created_at,
+        u.id as u_id, u.username as u_username, u.nick_name as u_nick_name
+        FROM user_achievements ua
+        LEFT JOIN achievements a ON ua.achievement_id = a.id
+        LEFT JOIN users u ON ua.user_id = u.id
+        WHERE ua.id = #{id}
+    </select>
+
+    <select id="selectByUserIdAndAchievementId" resultMap="UserAchievementResultMap">
+        SELECT
+        ua.*,
+        a.id as a_id, a.code as a_code, a.name as a_name, a.description as a_description,
+        a.icon_url as a_icon_url, a.condition_type as a_condition_type,
+        a.condition_value as a_condition_value, a.created_at as a_created_at,
+        u.id as u_id, u.username as u_username, u.nick_name as u_nick_name
+        FROM user_achievements ua
+        LEFT JOIN achievements a ON ua.achievement_id = a.id
+        LEFT JOIN users u ON ua.user_id = u.id
+        WHERE ua.user_id = #{userId} AND ua.achievement_id = #{achievementId}
+    </select>
+
+    <select id="selectByUserId" resultMap="UserAchievementResultMap">
+        SELECT
+        ua.*,
+        a.id as a_id, a.code as a_code, a.name as a_name, a.description as a_description,
+        a.icon_url as a_icon_url, a.condition_type as a_condition_type,
+        a.condition_value as a_condition_value, a.created_at as a_created_at,
+        u.id as u_id, u.username as u_username, u.nick_name as u_nick_name
+        FROM user_achievements ua
+        LEFT JOIN achievements a ON ua.achievement_id = a.id
+        LEFT JOIN users u ON ua.user_id = u.id
+        WHERE ua.user_id = #{userId}
+        ORDER BY ua.unlocked_at DESC, a.id ASC
+    </select>
+
+    <select id="selectUnlockedByUserId" resultMap="UserAchievementResultMap">
+        SELECT
+        ua.*,
+        a.id as a_id, a.code as a_code, a.name as a_name, a.description as a_description,
+        a.icon_url as a_icon_url, a.condition_type as a_condition_type,
+        a.condition_value as a_condition_value, a.created_at as a_created_at,
+        u.id as u_id, u.username as u_username, u.nick_name as u_nick_name
+        FROM user_achievements ua
+        LEFT JOIN achievements a ON ua.achievement_id = a.id
+        LEFT JOIN users u ON ua.user_id = u.id
+        WHERE ua.user_id = #{userId} AND ua.is_unlocked = true
+        ORDER BY ua.unlocked_at DESC
+    </select>
+
+    <update id="update">
+        UPDATE user_achievements
+        SET unlocked_at = #{unlockedAt},
+        progress = #{progress},
+        is_unlocked = #{isUnlocked}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBatch">
+        <foreach collection="list" item="ua" separator=";">
+            UPDATE user_achievements
+            SET unlocked_at = #{ua.unlockedAt},
+            progress = #{ua.progress},
+            is_unlocked = #{ua.isUnlocked}
+            WHERE id = #{ua.id}
+        </foreach>
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM user_achievements WHERE id = #{id}
+    </delete>
+
+    <select id="countUnlockedByUserId" resultType="Integer">
+        SELECT COUNT(*) FROM user_achievements
+        WHERE user_id = #{userId} AND is_unlocked = true
+    </select>
+
+</mapper>
