@@ -1,6 +1,7 @@
 # iRunner 后端服务
 
 基于 Spring Boot 的跑步社交应用后端服务
+该README文件描述后端，若需阅读前端README请点击跳转[前端](https://github.com/kavic519/iRunner/blob/main/irunner_web/README.md)
 
 ## 项目简介
 
