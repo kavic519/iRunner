@@ -1,144 +1,140 @@
-# iRunner 后端服务
+# iRunner 跑步健身应用
 
-基于 Spring Boot 的跑步社交应用后端服务
-该README文件描述后端，若需阅读前端README请点击跳转[前端](https://github.com/kavic519/iRunner/blob/main/irunner_web/README.md)
-
-## 项目简介
-
-iRunner 是一个现代化的跑步社交应用后端服务，为移动端提供完整的跑步数据追踪、用户社交和成就激励功能。项目采用 Spring Boot 框架，结合 MyBatis 和 JPA 双 ORM 架构，提供高性能、高可用的 RESTful API 服务。
-
-### 核心功能
-
-#### 跑步追踪模块
-- GPS 轨迹记录：实时记录用户跑步轨迹坐标点
-- 运动数据计算：自动计算距离、时长、配速、卡路里
-- 批量数据处理：高性能的轨迹坐标批量存储
-- 历史记录管理：完整的跑步记录 CRUD 操作
-
-#### 用户管理模块
-- 用户注册登录：安全的用户认证体系
-- 个人信息管理：头像、昵称、个人统计管理
-- 数据统计追踪：实时更新用户跑步总数据
-- 排行榜系统：多维度用户排行榜（距离、次数、时长）
-
-#### 社交圈子模块
-- 社区创建管理：支持用户创建和管理跑步圈子
-- 成员关系管理：完整的加入/退出机制
-- 圈子搜索发现：关键词搜索和热门推荐
-- 圈子计数操作：并发安全的成员数量管理
-
-#### 成就激励模块
-- **多维度成就系统**：基于跑步次数、距离、时长的成就体系
-- **实时进度追踪**：自动检查和解锁用户成就
-- **智能条件判断**：支持多种成就条件类型
-- **进度可视化**：实时显示成就完成进度
-
-## ★技术架构
-
-### 后端技术栈
-- **核心框架**：Spring Boot 3.x
-- **数据持久化**：JPA/Hibernate + MyBatis（双ORM架构）
-- **数据库**：MySQL 8.0
-- API设计：RESTful风格
-- **构建工具**：Maven
-
-### 架构特色
-- **分层架构**：清晰的 Controller-Service-Mapper-Entity 分层
-- **统一响应**：标准化的 API 响应格式
-- **全局异常**：统一的异常处理机制
-- **事务管理**：声明式事务保障数据一致性
-- **性能优化**：批量操作、懒加载、原子更新
-
-# 系统要求
-
-## 环境要求
-- JDK 8 或更高版本  
-- MySQL 5.7 或更高版本  
-- Maven 3.6 或更高版本  
-
-## 依赖服务
-- MySQL 数据库服务  
-- (可选) Redis 缓存服务（为后续扩展预留）  
+## 项目概述
+iRunner 是一个基于 **Flutter** 开发的全平台跑步健身应用。项目集成了用户系统、跑步追踪、社交圈子、成就激励等功能模块，前后端通过 RESTful API 实现数据交互。
+前端说明文档:[前端](https://github.com/kavic519/iRunner/blob/main/irunner_web/README.md)
+后端说明文档:[后端](https://github.com/kavic519/iRunner/blob/main/irunner_springboot/README.md)
 
 ---
 
-## 快速开始
+## 技术架构
 
-### 1. 数据库配置
+### 前端技术栈
+- **Flutter 3.0+**：跨平台 UI 框架
+- **Provider**：全局状态管理
+- **FlutterMap**：地图显示与路径绘制
+- **Geolocator**：GPS 定位服务
+- **HTTP**：网络请求处理
+- **SharedPreferences**：本地数据持久化
 
-```sql
-CREATE DATABASE irunner CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+### 后端 API 架构
+- **RESTful API**：标准化接口设计
+- **统一响应格式**：`{success, message, data, error}`
+- **基础 URL**：`http://www.kavic.xyz:8080/api`
+
+---
+
+## 项目开发模式：增量与迭代
+
+### 增量开发
+- 项目采用**增量开发**模式，每次开发新增一个独立的功能模块或页面。
+- 项目最初只有跑步页面，后续逐步**增量**增加了跑步记录页面、圈子页面、用户页面、主页面、成就页面等。
+- 每个增量都通过 API 与后端数据联动，实现功能闭环。
+
+### 迭代优化
+- 对跑步页面进行多次界面美化、性能提升，对用户认证流程进行完善和异常处理，对圈子功能进行权限和交互优化。
+- 迭代过程中持续修复 BUG，提升代码质量和稳定性。
+
+---
+
+## 主要功能模块
+
+### 1. 用户认证系统
+- 用户注册、登录、退出
+- 全局登录状态同步，未登录时页面自动提示“请登录账号”
+- 用户信息获取与展示
+
+### 2. 跑步核心功能
+- 实时 GPS 定位与地图轨迹绘制
+- 跑步数据统计（距离、时间、速度等）
+- 跑步记录创建、查询、详情展示
+
+### 3. 用户个人中心
+- 个人资料展示（头像、昵称、统计数据）
+- 跑步统计（总里程、总次数、总时长）
+- 账号管理（登录/注册/退出）
+
+### 4. 社交圈子系统
+- 创建、加入、退出圈子
+- 圈子搜索与发现
+- 权限控制（创建者可删除圈子）
+- 成员数量统计
+
+### 5. 排行榜系统
+- 跑步距离、次数排行榜
+- 多维度排名切换
+- 实时数据更新
+
+### 6. 成就激励系统
+- 多类型成就解锁与进度追踪
+- 成就可视化展示
+- 激励机制设计
+
+---
+
+## 用户体验设计
+
+- 全局状态管理：Provider 实现登录状态和数据同步
+- 响应式布局：主要内容居中偏上，适配多端屏幕
+- 权限控制：未登录时功能受限，已登录后解锁全部功能
+- 友好交互：操作即时反馈，错误提示清晰
+
+---
+
+## 主要接口 API 示例
+
+### 用户相关
+- `POST /api/users/register`    用户注册
+- `POST /api/users/login`       用户登录
+- `GET /api/users/{userId}`     获取用户信息
+- `GET /api/users/leaderboard`  获取排行榜
+
+### 跑步记录相关
+- `POST /api/runs/users/{userId}`        创建跑步记录
+- `GET /api/runs/users/{userId}`         获取用户跑步记录
+- `GET /api/runs/{runId}`                获取跑步详情
+- `GET /api/runs/users/{userId}/stats`   获取用户统计信息
+
+### 圈子相关
+- `POST /api/communities`                     创建圈子
+- `GET /api/communities`                      获取所有圈子
+- `GET /api/communities/search`               搜索圈子
+- `POST /api/communities/{communityId}/join`  加入圈子
+- `POST /api/communities/{communityId}/leave` 退出圈子
+- `GET /api/communities/users/{userId}`       获取用户加入的圈子
+
+### 成就相关
+- `GET /api/achievements/users/{userId}`      获取用户成就
+
+---
+
+## 数据流架构
+
+```
+Flutter App
+   ↕ HTTP请求
+RESTful API (kavic.xyz:8080)
+   ↕ 数据存储
+数据库系统
 ```
 
-## 2. 配置文件
-
-复制 application.properties 文件，配置数据库连接信息：
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3060/irunner
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+### 状态管理流程
+```
+用户操作 → UserService → notifyListeners() → Consumer重建UI → 界面更新
 ```
 
-## 3. 启动服务
-```
-mvn spring-boot:run
-```
-服务将在 `http://localhost:8080/api` 启动
+---
 
-## 数据库设计
+## 项目亮点
 
-### 核心数据表
-- users - 用户信息表  
-- run_sessions - 跑步记录表  
-- coordinates - 轨迹坐标表  
-- communities - 社区圈子表  
-- achievements - 成就定义表  
-- user_achievements - 用户成就关联表  
-- user_community - 用户社区关系表  
+- **增量开发**：功能模块逐步扩展，项目从单一跑步页面发展为多功能健身应用
+- **迭代优化**：持续完善已有功能，提升用户体验和系统稳定性
+- **全平台支持**：一套代码多端运行
+- **模块化架构**：代码结构清晰，易于维护和扩展
+- **前后端联动**：API接口设计规范，数据交互高效
 
-### 关系设计
-- 用户与跑步记录：一对多关系  
-- 跑步记录与坐标点：一对多关系  
-- 用户与社区圈子：多对多关系  
-- 用户与成就系统：多对多关系（含进度状态）
+---
 
-## API 接口
+## 运行方式
 
-API接口文档[API文档](https://github.com/kavic519/iRunner/blob/main/irunner_springboot/API.md)
-
-
-## 项目特色
-
-### 技术创新
-
-- **双ORM架构**：JPA 简化基础 CRUD，MyBatis 优化复杂查询  
-- **原子操作**：开发安全的统计更新机制  
-- **批量处理**：高性能的轨迹坐标批量存储  
-- **统一异常处理**：全局异常捕获和标准化错误响应  
-
-### 业务价值
-
-- **完整的功能闭环**：从数据采集到社交互动的完整业务流程  
-- **可扩展架构**：模块化设计支持功能快速迭代  
-- **性能优化**：针对运动应用场景的特殊优化  
-- **数据一致性**：事务管理保障业务数据完整性  
-
-### 扩展规划
-
-#### 近期优化
-
-- JWT 令牌认证增强安全性  
-- **缓存机制提升性能**  
-- API 限流防止滥用  
-- **数据备份和恢复机制**
-
-#### 长期规划
-- 微服务架构改造
-
-- 大数据分析平台
-
-- 实时消息推送
-
-- 第三方服务集成
-
+- 基于 Flutter 环境，在 Android Studio 中运行
